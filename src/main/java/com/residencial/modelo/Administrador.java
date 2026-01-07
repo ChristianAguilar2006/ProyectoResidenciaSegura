@@ -1,10 +1,11 @@
 package com.residencial.modelo;
 
 import com.residencial.dao.*;
+import com.residencial.interfaces.IMenuAdministrador;
 import java.util.List;
 import java.util.Scanner;
 
-public class Administrador extends Usuario {
+public class Administrador extends Usuario implements IMenuAdministrador {
     
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
     private AvisoDAO avisoDAO = new AvisoDAO();
@@ -98,6 +99,99 @@ public class Administrador extends Usuario {
         System.out.println("\n--- REPORTES ---");
         System.out.println("Funcionalidad en desarrollo");
         System.out.println("Aquí se mostrarían reportes de pagos, pedidos, emergencias, etc.");
+    }
+    
+    public void crearUsuarioGUI(String nombre, String correo, String contrasena, String rol, String departamento, String bloque) throws Exception {
+        Usuario usuario = new Usuario(nombre, correo, contrasena, rol, departamento, bloque);
+        if (!usuarioDAO.crear(usuario)) {
+            throw new Exception("Error al crear el usuario");
+        }
+    }
+    
+    public void crearAvisoGUI(String titulo, String mensaje, String tipo) throws Exception {
+        Aviso aviso = new Aviso(this.getIdUsuario(), titulo, mensaje, tipo);
+        if (!avisoDAO.crear(aviso)) {
+            throw new Exception("Error al crear el aviso");
+        }
+    }
+    
+    public List<Aviso> obtenerAvisos() throws Exception {
+        return avisoDAO.obtenerActivos();
+    }
+    
+    @Override
+    public void mostrarMenu() {
+        System.out.println("\n--- MENÚ ADMINISTRADOR ---");
+        System.out.println("Usuario: " + this.getNombre());
+        System.out.println("1. Ver Perfil");
+        System.out.println("2. Gestionar Usuarios");
+        System.out.println("3. Crear Aviso");
+        System.out.println("4. Ver Avisos");
+        System.out.println("5. Ver Reportes");
+        System.out.println("6. Cerrar Sesión");
+        System.out.println("7. Salir");
+        System.out.print("Seleccione una opción: ");
+    }
+    
+    @Override
+    public void procesarOpcion(int opcion) {
+        switch (opcion) {
+            case 1:
+                verPerfil();
+                break;
+            case 2:
+                gestionarUsuarios();
+                break;
+            case 3:
+                crearAviso();
+                break;
+            case 4:
+                verAvisos();
+                break;
+            case 5:
+                verReportes();
+                break;
+            case 6:
+                break;
+            case 7:
+                System.out.println("\n¡Hasta luego!");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Opción inválida");
+        }
+    }
+    
+    private void verPerfil() {
+        System.out.println("\n--- MI PERFIL ---");
+        System.out.println("ID: " + this.getIdUsuario());
+        System.out.println("Nombre: " + this.getNombre());
+        System.out.println("Correo: " + this.getCorreo());
+        System.out.println("Rol: " + this.getRol());
+        System.out.println("Departamento: " + this.getDepartamento());
+        System.out.println("Bloque: " + this.getBloque());
+        System.out.println("Teléfono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
+    }
+    
+    private void gestionarUsuarios() {
+        System.out.println("\n--- GESTIONAR USUARIOS ---");
+        System.out.println("1. Crear Usuario");
+        System.out.println("2. Volver");
+        System.out.print("Seleccione: ");
+        
+        try {
+            int op = scanner.nextInt();
+            scanner.nextLine();
+            if (op == 1) {
+                crearUsuario();
+            } else if (op == 2) {
+            } else {
+                System.out.println("Opcion invalida");
+            }
+        } catch (Exception e) {
+            scanner.nextLine();
+            System.out.println("Error: Debe ingresar un numero (1 o 2)");
+        }
     }
 }
 

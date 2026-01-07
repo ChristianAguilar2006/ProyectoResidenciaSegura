@@ -1,6 +1,7 @@
 package com.residencial;
 
 import com.residencial.dao.UsuarioDAO;
+import com.residencial.interfaces.*;
 import com.residencial.modelo.*;
 import java.util.Scanner;
 
@@ -50,13 +51,25 @@ public class Main {
                 
                 if (rol.equals("RESIDENTE")) {
                     Residente residente = convertirAResidente(usuarioActual);
-                    menuResidente(opcion, residente);
+                    IMenuResidente menu = residente;
+                    menu.procesarOpcion(opcion);
+                    if (opcion == 9) {
+                        cerrarSesion();
+                    }
                 } else if (rol.equals("ADMINISTRADOR")) {
                     Administrador admin = convertirAAdministrador(usuarioActual);
-                    menuAdministrador(opcion, admin);
+                    IMenuAdministrador menu = admin;
+                    menu.procesarOpcion(opcion);
+                    if (opcion == 6) {
+                        cerrarSesion();
+                    }
                 } else if (rol.equals("GUARDIA")) {
                     Guardia guardia = convertirAGuardia(usuarioActual);
-                    menuGuardia(opcion, guardia);
+                    IMenuGuardia menu = guardia;
+                    menu.procesarOpcion(opcion);
+                    if (opcion == 4) {
+                        cerrarSesion();
+                    }
                 }
             }
         }
@@ -76,52 +89,18 @@ public class Main {
         String rol = usuarioActual.getRol();
         
         if (rol.equals("RESIDENTE")) {
-            mostrarMenuResidente();
+            Residente residente = convertirAResidente(usuarioActual);
+            IMenuResidente menu = residente;
+            menu.mostrarMenu();
         } else if (rol.equals("ADMINISTRADOR")) {
-            mostrarMenuAdministrador();
+            Administrador admin = convertirAAdministrador(usuarioActual);
+            IMenuAdministrador menu = admin;
+            menu.mostrarMenu();
         } else if (rol.equals("GUARDIA")) {
-            mostrarMenuGuardia();
+            Guardia guardia = convertirAGuardia(usuarioActual);
+            IMenuGuardia menu = guardia;
+            menu.mostrarMenu();
         }
-    }
-    
-    private static void mostrarMenuResidente() {
-        System.out.println("\n--- MENÚ RESIDENTE ---");
-        System.out.println("Usuario: " + usuarioActual.getNombre());
-        System.out.println("1. Ver Perfil");
-        System.out.println("2. Actualizar Perfil");
-        System.out.println("3. Pagar Servicio");
-        System.out.println("4. Ver Mis Pagos");
-        System.out.println("5. Crear Pedido");
-        System.out.println("6. Ver Mis Pedidos");
-        System.out.println("7. Activar Emergencia");
-        System.out.println("8. Ver Avisos");
-        System.out.println("9. Cerrar Sesión");
-        System.out.println("10. Salir");
-        System.out.print("Seleccione una opción: ");
-    }
-    
-    private static void mostrarMenuAdministrador() {
-        System.out.println("\n--- MENÚ ADMINISTRADOR ---");
-        System.out.println("Usuario: " + usuarioActual.getNombre());
-        System.out.println("1. Ver Perfil");
-        System.out.println("2. Gestionar Usuarios");
-        System.out.println("3. Crear Aviso");
-        System.out.println("4. Ver Avisos");
-        System.out.println("5. Ver Reportes");
-        System.out.println("6. Cerrar Sesión");
-        System.out.println("7. Salir");
-        System.out.print("Seleccione una opción: ");
-    }
-    
-    private static void mostrarMenuGuardia() {
-        System.out.println("\n--- MENÚ GUARDIA ---");
-        System.out.println("Usuario: " + usuarioActual.getNombre());
-        System.out.println("1. Ver Perfil");
-        System.out.println("2. Ver Emergencias Activas");
-        System.out.println("3. Atender Emergencia");
-        System.out.println("4. Cerrar Sesión");
-        System.out.println("5. Salir");
-        System.out.print("Seleccione una opción: ");
     }
     
     private static void iniciarSesion() {
@@ -144,69 +123,9 @@ public class Main {
         }
     }
     
-    private static void verPerfil() {
-        System.out.println("\n--- MI PERFIL ---");
-        System.out.println("ID: " + usuarioActual.getIdUsuario());
-        System.out.println("Nombre: " + usuarioActual.getNombre());
-        System.out.println("Correo: " + usuarioActual.getCorreo());
-        System.out.println("Rol: " + usuarioActual.getRol());
-        System.out.println("Departamento: " + usuarioActual.getDepartamento());
-        System.out.println("Bloque: " + usuarioActual.getBloque());
-        System.out.println("Teléfono: " + (usuarioActual.getTelefono() != null ? usuarioActual.getTelefono() : "No registrado"));
-    }
-    
-    private static void actualizarPerfil() {
-        System.out.println("\n--- ACTUALIZAR PERFIL ---");
-        System.out.print("Nuevo nombre (Enter para mantener): ");
-        String nombre = scanner.nextLine();
-        
-        if (!nombre.isEmpty()) {
-            usuarioActual.setNombre(nombre);
-        }
-        
-        System.out.print("Nuevo telefono (Enter para mantener): ");
-        String telefono = scanner.nextLine();
-        if (!telefono.isEmpty()) {
-            usuarioActual.setTelefono(telefono);
-        }
-        
-        try {
-            boolean exito = usuarioDAO.actualizar(usuarioActual);
-            
-            if (exito) {
-                System.out.println("\nPerfil actualizado correctamente");
-            } else {
-                System.out.println("\nError al actualizar el perfil");
-            }
-        } catch (Exception e) {
-            System.out.println("\nError: " + e.getMessage());
-        }
-    }
-    
     private static void cerrarSesion() {
         usuarioActual = null;
         System.out.println("\nSesion cerrada");
-    }
-    
-    private static void gestionarUsuarios(Administrador admin) {
-        System.out.println("\n--- GESTIONAR USUARIOS ---");
-        System.out.println("1. Crear Usuario");
-        System.out.println("2. Volver");
-        System.out.print("Seleccione: ");
-        
-        try {
-            int op = scanner.nextInt();
-            scanner.nextLine();
-            if (op == 1) {
-                admin.crearUsuario();
-            } else if (op == 2) {
-            } else {
-                System.out.println("Opcion invalida");
-            }
-        } catch (Exception e) {
-            scanner.nextLine();
-            System.out.println("Error: Debe ingresar un numero (1 o 2)");
-        }
     }
     
     private static Residente convertirAResidente(Usuario usuario) {
@@ -245,97 +164,5 @@ public class Main {
         return guardia;
     }
     
-    
-    private static void menuResidente(int opcion, Residente residente) {
-        switch (opcion) {
-            case 1:
-                verPerfil();
-                break;
-            case 2:
-                actualizarPerfil();
-                break;
-            case 3:
-                residente.pagarServicio();
-                break;
-            case 4:
-                residente.verHistorialPagos();
-                break;
-            case 5:
-                residente.crearPedido();
-                break;
-            case 6:
-                residente.verEstadoPedidos();
-                break;
-            case 7:
-                residente.activarEmergencia();
-                break;
-            case 8:
-                residente.verAvisos();
-                break;
-            case 9:
-                cerrarSesion();
-                break;
-            case 10:
-                System.out.println("\n¡Hasta luego!");
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Opción inválida");
-        }
-    }
-    
-    
-    private static void menuAdministrador(int opcion, Administrador admin) {
-        switch (opcion) {
-            case 1:
-                verPerfil();
-                break;
-            case 2:
-                gestionarUsuarios(admin);
-                break;
-            case 3:
-                admin.crearAviso();
-                break;
-            case 4:
-                admin.verAvisos();
-                break;
-            case 5:
-                admin.verReportes();
-                break;
-            case 6:
-                cerrarSesion();
-                break;
-            case 7:
-                System.out.println("\n¡Hasta luego!");
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Opción inválida");
-        }
-    }
-    
-    
-    private static void menuGuardia(int opcion, Guardia guardia) {
-        switch (opcion) {
-            case 1:
-                verPerfil();
-                break;
-            case 2:
-                guardia.verEmergenciasActivas();
-                break;
-            case 3:
-                guardia.atenderEmergencia();
-                break;
-            case 4:
-                cerrarSesion();
-                break;
-            case 5:
-                System.out.println("\n¡Hasta luego!");
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Opción inválida");
-        }
-    }
 }
 

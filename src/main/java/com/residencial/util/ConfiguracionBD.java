@@ -6,7 +6,7 @@ public class ConfiguracionBD {
     public static final String PUERTO = "3306";
     public static final String BASE_DATOS = "resident_god";
     public static final String USUARIO = "root";
-    public static final String CONTRASEÑA = "";
+    public static final String CONTRASEÑA = "123456";
     
     public static String obtenerURL() {
         return "jdbc:mysql://" + HOST + ":" + PUERTO + "/" + BASE_DATOS + 

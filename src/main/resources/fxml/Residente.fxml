@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<TabPane prefHeight="700.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.residencial.gui.controladores.ResidenteController">
+  <tabs>
+    <Tab text="Perfil">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <VBox alignment="CENTER_LEFT" layoutX="50.0" layoutY="50.0" spacing="15.0">
+              <children>
+                <Label text="Mi Perfil">
+                  <font>
+                    <Font name="System Bold" size="20.0" />
+                  </font>
+                </Label>
+                <Label text="Nombre:" />
+                <Label fx:id="lblNombre" text="-" />
+                <Label text="Correo:" />
+                <Label fx:id="lblCorreo" text="-" />
+                <Label text="Departamento:" />
+                <Label fx:id="lblDepartamento" text="-" />
+                <Label text="Bloque:" />
+                <Label fx:id="lblBloque" text="-" />
+                <Button mnemonicParsing="false" onAction="#actualizarPerfil" text="Actualizar Perfil" />
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Pagar Servicio">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <VBox layoutX="50.0" layoutY="50.0" spacing="15.0">
+              <children>
+                <Label text="Registrar Pago">
+                  <font>
+                    <Font name="System Bold" size="18.0" />
+                  </font>
+                </Label>
+                <TextField fx:id="txtTipoServicio" promptText="Tipo (LUZ, AGUA, ALICUOTA, GAS, OTRO)" prefWidth="400.0" />
+                <TextField fx:id="txtMonto" promptText="Monto" prefWidth="400.0" />
+                <TextField fx:id="txtFechaVencimiento" promptText="Fecha Vencimiento (YYYY-MM-DD)" prefWidth="400.0" />
+                <Button mnemonicParsing="false" onAction="#pagarServicio" text="Registrar Pago" />
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Mis Pagos">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <TableView fx:id="tablaPagos" layoutX="20.0" layoutY="20.0" prefHeight="600.0" prefWidth="860.0" />
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Crear Pedido">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <VBox layoutX="50.0" layoutY="50.0" spacing="15.0">
+              <children>
+                <Label text="Nuevo Pedido">
+                  <font>
+                    <Font name="System Bold" size="18.0" />
+                  </font>
+                </Label>
+                <TextArea fx:id="txtDescripcionPedido" prefHeight="100.0" prefWidth="400.0" promptText="Descripción del pedido" />
+                <TextField fx:id="txtTipoPedido" promptText="Tipo (ENCARGO, SERVICIO, PRODUCTO, OTRO)" prefWidth="400.0" />
+                <Button mnemonicParsing="false" onAction="#crearPedido" text="Crear Pedido" />
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Mis Pedidos">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <TableView fx:id="tablaPedidos" layoutX="20.0" layoutY="20.0" prefHeight="600.0" prefWidth="860.0" />
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Emergencia">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <VBox layoutX="50.0" layoutY="50.0" spacing="15.0">
+              <children>
+                <Label text="Reportar Emergencia">
+                  <font>
+                    <Font name="System Bold" size="18.0" />
+                  </font>
+                </Label>
+                <TextField fx:id="txtTipoEmergencia" promptText="Tipo (MEDICA, INCENDIO, ROBO, etc.)" prefWidth="400.0" />
+                <TextArea fx:id="txtDescripcionEmergencia" prefHeight="100.0" prefWidth="400.0" promptText="Descripción" />
+                <TextField fx:id="txtUbicacionEmergencia" promptText="Ubicación" prefWidth="400.0" />
+                <TextField fx:id="txtPrioridad" promptText="Prioridad (BAJA, MEDIA, ALTA, CRITICA)" prefWidth="400.0" />
+                <Button mnemonicParsing="false" onAction="#activarEmergencia" text="Activar Emergencia" />
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Avisos">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <TableView fx:id="tablaAvisos" layoutX="20.0" layoutY="20.0" prefHeight="600.0" prefWidth="860.0" />
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>

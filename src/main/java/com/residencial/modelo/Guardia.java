@@ -1,10 +1,11 @@
 package com.residencial.modelo;
 
 import com.residencial.dao.EmergenciaDAO;
+import com.residencial.interfaces.IMenuGuardia;
 import java.util.List;
 import java.util.Scanner;
 
-public class Guardia extends Usuario {
+public class Guardia extends Usuario implements IMenuGuardia {
     
     private EmergenciaDAO emergenciaDAO = new EmergenciaDAO();
     private Scanner scanner = new Scanner(System.in);
@@ -64,6 +65,62 @@ public class Guardia extends Usuario {
         } catch (Exception e) {
             System.out.println("\nError: " + e.getMessage());
         }
+    }
+    
+    @Override
+    public void mostrarMenu() {
+        System.out.println("\n--- MENÚ GUARDIA ---");
+        System.out.println("Usuario: " + this.getNombre());
+        System.out.println("1. Ver Perfil");
+        System.out.println("2. Ver Emergencias Activas");
+        System.out.println("3. Atender Emergencia");
+        System.out.println("4. Cerrar Sesión");
+        System.out.println("5. Salir");
+        System.out.print("Seleccione una opción: ");
+    }
+    
+    @Override
+    public void procesarOpcion(int opcion) {
+        switch (opcion) {
+            case 1:
+                verPerfil();
+                break;
+            case 2:
+                verEmergenciasActivas();
+                break;
+            case 3:
+                atenderEmergencia();
+                break;
+            case 4:
+                break;
+            case 5:
+                System.out.println("\n¡Hasta luego!");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Opción inválida");
+        }
+    }
+    
+    private void verPerfil() {
+        System.out.println("\n--- MI PERFIL ---");
+        System.out.println("ID: " + this.getIdUsuario());
+        System.out.println("Nombre: " + this.getNombre());
+        System.out.println("Correo: " + this.getCorreo());
+        System.out.println("Rol: " + this.getRol());
+        System.out.println("Departamento: " + this.getDepartamento());
+        System.out.println("Bloque: " + this.getBloque());
+        System.out.println("Teléfono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
+    }
+    
+    public void atenderEmergenciaGUI(int idEmergencia, String nuevoEstado) throws Exception {
+        if (!emergenciaDAO.actualizarEstado(idEmergencia, nuevoEstado, this.getIdUsuario())) {
+            throw new Exception("Error al actualizar la emergencia");
+        }
+    }
+    
+    public List<Emergencia> obtenerEmergenciasActivas() throws Exception {
+        return emergenciaDAO.obtenerActivas();
     }
 }
 

@@ -16,21 +16,19 @@ Sistema que permite gestionar de manera centralizada:
 - Java (JDK 8 o superior)
 - MySQL (5.7 o superior)
 - JDBC para conexion a base de datos
-- XAMPP (recomendado para desarrollo local)
+- Maven para gestion de dependencias
 
 ## Requisitos Previos
 
-1. Java JDK instalado (verificar con java -version)
+1. Java JDK 8 o superior instalado
 2. MySQL instalado y corriendo
-   - Opcion 1: XAMPP (recomendado para Windows)
-   - Opcion 2: MySQL Server independiente
-3. MySQL Connector/J (driver JDBC para MySQL)
+3. Maven instalado (opcional, si usas IDE puede manejar las dependencias)
 
 ## Instalacion y Configuracion
 
 ### Paso 1: Configurar MySQL
 
-1. Iniciar MySQL (si usas XAMPP, inicia el servicio MySQL desde el panel de control)
+1. Iniciar MySQL
 
 2. Crear la base de datos ejecutando el script SQL:
    - Abre database/schema.sql y ejecuta todo el script
@@ -43,16 +41,7 @@ Sistema que permite gestionar de manera centralizada:
    SHOW TABLES;
    ```
 
-### Paso 2: Configurar el Proyecto Java
-
-1. Descargar MySQL Connector/J desde: https://dev.mysql.com/downloads/connector/j/
-
-2. Agregar el driver al proyecto:
-   - Crea una carpeta lib en la raiz del proyecto
-   - Copia el archivo mysql-connector-java-X.X.XX.jar a la carpeta lib
-   - En tu IDE, agrega el JAR al Build Path / Classpath
-
-### Paso 3: Configurar Credenciales
+### Paso 2: Configurar Credenciales
 
 Edita el archivo src/main/java/com/residencial/util/ConexionBD.java:
 
@@ -61,9 +50,16 @@ private static final String USER = "root";
 private static final String PASSWORD = "";
 ```
 
-### Paso 4: Probar la Conexion
+### Paso 3: Ejecutar la Aplicacion
 
-Ejecuta la clase TestConexion.java desde tu IDE
+Desde tu IDE:
+- Ejecuta la clase `com.residencial.gui.MainApp`
+
+O desde Maven:
+```bash
+mvn clean compile
+mvn exec:java -Dexec.mainClass="com.residencial.gui.MainApp"
+```
 
 ## Estructura del Proyecto
 
@@ -76,7 +72,17 @@ proyectoFinalProgra2yandex/
 │       └── java/
 │           └── com/
 │               └── residencial/
-│                   ├── Main.java
+│                   ├── Main.java (consola - opcional)
+│                   ├── gui/
+│                   │   ├── MainApp.java
+│                   │   ├── controladores/
+│                   │   │   └── LoginController.java
+│                   │   ├── ventanas/
+│                   │   │   ├── VentanaResidente.java
+│                   │   │   ├── VentanaAdministrador.java
+│                   │   │   └── VentanaGuardia.java
+│                   │   └── util/
+│                   │       └── DialogosUtil.java
 │                   ├── dao/
 │                   ├── modelo/
 │                   ├── util/
@@ -104,7 +110,9 @@ Ver archivo USUARIOS_PRUEBA.md para las credenciales de prueba.
 
 ## Uso
 
-Ejecuta la clase Main.java para iniciar el sistema.
+Ejecuta la clase Main.java para iniciar el sistema por consola.
+
+El sistema muestra un menu interactivo donde puedes iniciar sesion con los usuarios de prueba.
 
 ## Solucion de Problemas
 
@@ -121,9 +129,11 @@ Ejecuta la clase Main.java para iniciar el sistema.
 - Verifica que MySQL este corriendo
 - Verifica que el puerto 3306 este disponible
 
+
 ## Notas Importantes
 
 - Este proyecto esta disenado para Programacion II con enfoque en POO
 - La base de datos MySQL permite persistencia de datos
 - El sistema utiliza JDBC para la conexion (sin frameworks avanzados)
+- Interfaz por consola con menus interactivos
 - Cada clase del sistema se relaciona con una tabla en la base de datos
