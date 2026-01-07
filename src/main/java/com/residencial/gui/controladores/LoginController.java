@@ -23,7 +23,7 @@ public class LoginController {
         String correo = txtCorreo.getText().trim();
         String contrasena = txtContrasena.getText();
         
-        if (correo.isEmpty() || contrasena.isEmpty()) {
+        if (camposVacios(correo, contrasena)) {
             mostrarAlerta("Error", "Por favor complete todos los campos", Alert.AlertType.ERROR);
             return;
         }
@@ -31,26 +31,35 @@ public class LoginController {
         try {
             Usuario usuario = usuarioDAO.login(correo, contrasena);
             
-            if (usuario != null) {
-                String rol = usuario.getRol();
-                
-                if (rol.equals("RESIDENTE")) {
-                    Residente residente = convertirAResidente(usuario);
-                    Navegacion.abrirVentanaResidente(residente);
-                } else if (rol.equals("ADMINISTRADOR")) {
-                    Administrador admin = convertirAAdministrador(usuario);
-                    Navegacion.abrirVentanaAdministrador(admin);
-                } else if (rol.equals("GUARDIA")) {
-                    Guardia guardia = convertirAGuardia(usuario);
-                    Navegacion.abrirVentanaGuardia(guardia);
-                }
-                
-                cerrarVentana();
-            } else {
+            if (usuario == null) {
                 mostrarAlerta("Error", "Credenciales incorrectas", Alert.AlertType.ERROR);
+                return;
             }
+            
+            abrirVentanaSegunRol(usuario);
+            cerrarVentana();
+            
         } catch (Exception e) {
             mostrarAlerta("Error", "Error al iniciar sesión: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+    
+    private boolean camposVacios(String correo, String contrasena) {
+        return correo.isEmpty() || contrasena.isEmpty();
+    }
+    
+    private void abrirVentanaSegunRol(Usuario usuario) {
+        String rol = usuario.getRol();
+        
+        if (rol.equals("RESIDENTE")) {
+            Residente residente = crearResidenteDesdeUsuario(usuario);
+            Navegacion.abrirVentanaResidente(residente);
+        } else if (rol.equals("ADMINISTRADOR")) {
+            Administrador admin = crearAdministradorDesdeUsuario(usuario);
+            Navegacion.abrirVentanaAdministrador(admin);
+        } else if (rol.equals("GUARDIA")) {
+            Guardia guardia = crearGuardiaDesdeUsuario(usuario);
+            Navegacion.abrirVentanaGuardia(guardia);
         }
     }
     
@@ -59,40 +68,32 @@ public class LoginController {
         System.exit(0);
     }
     
-    private Residente convertirAResidente(Usuario usuario) {
+    private Residente crearResidenteDesdeUsuario(Usuario usuario) {
         Residente residente = new Residente();
-        residente.setIdUsuario(usuario.getIdUsuario());
-        residente.setNombre(usuario.getNombre());
-        residente.setCorreo(usuario.getCorreo());
-        residente.setRol(usuario.getRol());
-        residente.setDepartamento(usuario.getDepartamento());
-        residente.setBloque(usuario.getBloque());
-        residente.setTelefono(usuario.getTelefono());
+        copiarDatosUsuario(usuario, residente);
         return residente;
     }
     
-    private Administrador convertirAAdministrador(Usuario usuario) {
+    private Administrador crearAdministradorDesdeUsuario(Usuario usuario) {
         Administrador admin = new Administrador();
-        admin.setIdUsuario(usuario.getIdUsuario());
-        admin.setNombre(usuario.getNombre());
-        admin.setCorreo(usuario.getCorreo());
-        admin.setRol(usuario.getRol());
-        admin.setDepartamento(usuario.getDepartamento());
-        admin.setBloque(usuario.getBloque());
-        admin.setTelefono(usuario.getTelefono());
+        copiarDatosUsuario(usuario, admin);
         return admin;
     }
     
-    private Guardia convertirAGuardia(Usuario usuario) {
+    private Guardia crearGuardiaDesdeUsuario(Usuario usuario) {
         Guardia guardia = new Guardia();
-        guardia.setIdUsuario(usuario.getIdUsuario());
-        guardia.setNombre(usuario.getNombre());
-        guardia.setCorreo(usuario.getCorreo());
-        guardia.setRol(usuario.getRol());
-        guardia.setDepartamento(usuario.getDepartamento());
-        guardia.setBloque(usuario.getBloque());
-        guardia.setTelefono(usuario.getTelefono());
+        copiarDatosUsuario(usuario, guardia);
         return guardia;
+    }
+    
+    private void copiarDatosUsuario(Usuario origen, Usuario destino) {
+        destino.setIdUsuario(origen.getIdUsuario());
+        destino.setNombre(origen.getNombre());
+        destino.setCorreo(origen.getCorreo());
+        destino.setRol(origen.getRol());
+        destino.setDepartamento(origen.getDepartamento());
+        destino.setBloque(origen.getBloque());
+        destino.setTelefono(origen.getTelefono());
     }
     
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {

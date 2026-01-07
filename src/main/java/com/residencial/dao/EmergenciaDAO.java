@@ -35,26 +35,31 @@ public class EmergenciaDAO {
         String sql = "SELECT * FROM emergencias WHERE estado IN ('ACTIVA', 'EN_ATENCION') " +
                      "ORDER BY fecha_reporte DESC";
         
-        Connection con = ConexionBD.getConexion();
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            Emergencia emergencia = new Emergencia();
-            emergencia.setIdEmergencia(rs.getInt("id_emergencia"));
-            emergencia.setIdUsuario(rs.getInt("id_usuario"));
-            emergencia.setTipo(rs.getString("tipo"));
-            emergencia.setDescripcion(rs.getString("descripcion"));
-            emergencia.setUbicacion(rs.getString("ubicacion"));
-            emergencia.setFechaReporte(rs.getTimestamp("fecha_reporte"));
-            emergencia.setEstado(rs.getString("estado"));
-            emergencia.setPrioridad(rs.getString("prioridad"));
-            
+        Connection conexion = ConexionBD.getConexion();
+        PreparedStatement consulta = conexion.prepareStatement(sql);
+        ResultSet resultados = consulta.executeQuery();
+        
+        while (resultados.next()) {
+            Emergencia emergencia = crearEmergenciaDesdeResultado(resultados);
             listaEmergencias.add(emergencia);
         }
         
-        rs.close();
-        pstmt.close();
+        resultados.close();
+        consulta.close();
         return listaEmergencias;
+    }
+    
+    private Emergencia crearEmergenciaDesdeResultado(ResultSet resultados) throws SQLException {
+        Emergencia emergencia = new Emergencia();
+        emergencia.setIdEmergencia(resultados.getInt("id_emergencia"));
+        emergencia.setIdUsuario(resultados.getInt("id_usuario"));
+        emergencia.setTipo(resultados.getString("tipo"));
+        emergencia.setDescripcion(resultados.getString("descripcion"));
+        emergencia.setUbicacion(resultados.getString("ubicacion"));
+        emergencia.setFechaReporte(resultados.getTimestamp("fecha_reporte"));
+        emergencia.setEstado(resultados.getString("estado"));
+        emergencia.setPrioridad(resultados.getString("prioridad"));
+        return emergencia;
     }
     
     public boolean actualizarEstado(int idEmergencia, String nuevoEstado, Integer idGuardia) throws SQLException {

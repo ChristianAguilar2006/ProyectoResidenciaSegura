@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import com.residencial.modelo.Aviso;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,37 +53,43 @@ public class ResidenteController implements Initializable {
     }
     
     private void configurarTablas() {
-        if (tablaPagos != null) {
-            TableColumn colIdPago = new TableColumn("ID");
-            colIdPago.setCellValueFactory(new PropertyValueFactory<>("idPago"));
-            TableColumn colTipo = new TableColumn("Tipo");
-            colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoServicio"));
-            TableColumn colMonto = new TableColumn("Monto");
-            colMonto.setCellValueFactory(new PropertyValueFactory<>("monto"));
-            TableColumn colEstado = new TableColumn("Estado");
-            colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-            tablaPagos.getColumns().addAll(colIdPago, colTipo, colMonto, colEstado);
-        }
+        configurarTablaPagos();
+        configurarTablaPedidos();
+        configurarTablaAvisos();
+    }
+    
+    private void configurarTablaPagos() {
+        if (tablaPagos == null) return;
         
-        if (tablaPedidos != null) {
-            TableColumn colIdPedido = new TableColumn("ID");
-            colIdPedido.setCellValueFactory(new PropertyValueFactory<>("idPedido"));
-            TableColumn colDescripcion = new TableColumn("Descripción");
-            colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
-            TableColumn colEstado = new TableColumn("Estado");
-            colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-            tablaPedidos.getColumns().addAll(colIdPedido, colDescripcion, colEstado);
-        }
+        tablaPagos.getColumns().clear();
+        tablaPagos.getColumns().add(crearColumna("ID", "idPago"));
+        tablaPagos.getColumns().add(crearColumna("Tipo", "tipoServicio"));
+        tablaPagos.getColumns().add(crearColumna("Monto", "monto"));
+        tablaPagos.getColumns().add(crearColumna("Estado", "estado"));
+    }
+    
+    private void configurarTablaPedidos() {
+        if (tablaPedidos == null) return;
         
-        if (tablaAvisos != null) {
-            TableColumn colTitulo = new TableColumn("Título");
-            colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-            TableColumn colTipo = new TableColumn("Tipo");
-            colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-            TableColumn colFecha = new TableColumn("Fecha");
-            colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaPublicacion"));
-            tablaAvisos.getColumns().addAll(colTitulo, colTipo, colFecha);
-        }
+        tablaPedidos.getColumns().clear();
+        tablaPedidos.getColumns().add(crearColumna("ID", "idPedido"));
+        tablaPedidos.getColumns().add(crearColumna("Descripción", "descripcion"));
+        tablaPedidos.getColumns().add(crearColumna("Estado", "estado"));
+    }
+    
+    private void configurarTablaAvisos() {
+        if (tablaAvisos == null) return;
+        
+        tablaAvisos.getColumns().clear();
+        tablaAvisos.getColumns().add(crearColumna("Título", "titulo"));
+        tablaAvisos.getColumns().add(crearColumna("Tipo", "tipo"));
+        tablaAvisos.getColumns().add(crearColumna("Fecha", "fechaPublicacion"));
+    }
+    
+    private TableColumn crearColumna(String nombre, String propiedad) {
+        TableColumn columna = new TableColumn(nombre);
+        columna.setCellValueFactory(new PropertyValueFactory<>(propiedad));
+        return columna;
     }
     
     private void cargarDatosPerfil() {
@@ -94,17 +101,16 @@ public class ResidenteController implements Initializable {
     
     @FXML
     private void pagarServicio() {
+        String tipo = txtTipoServicio.getText().trim();
+        String monto = txtMonto.getText().trim();
+        String fecha = txtFechaVencimiento.getText().trim();
+        
+        if (!validarCamposPago(tipo, monto, fecha)) {
+            return;
+        }
+        
         try {
-            String tipo = txtTipoServicio.getText().trim();
-            String montoStr = txtMonto.getText().trim();
-            String fecha = txtFechaVencimiento.getText().trim();
-            
-            if (tipo.isEmpty() || montoStr.isEmpty() || fecha.isEmpty()) {
-                DialogosUtil.mostrarError("Complete todos los campos");
-                return;
-            }
-            
-            residente.pagarServicioGUI(tipo, montoStr, fecha);
+            residente.pagarServicioGUI(tipo, monto, fecha);
             DialogosUtil.mostrarExito("Pago registrado correctamente");
             limpiarCamposPago();
             cargarPagos();
@@ -113,17 +119,57 @@ public class ResidenteController implements Initializable {
         }
     }
     
+    private boolean validarCamposPago(String tipo, String monto, String fecha) {
+        if (tipo.isEmpty() || monto.isEmpty() || fecha.isEmpty()) {
+            DialogosUtil.mostrarError("Complete todos los campos");
+            return false;
+        }
+        
+        if (!esTipoServicioValido(tipo)) {
+            DialogosUtil.mostrarError("Tipo inválido. Use: LUZ, AGUA, ALICUOTA, GAS u OTRO");
+            return false;
+        }
+        
+        if (!esNumeroValido(monto)) {
+            DialogosUtil.mostrarError("El monto debe ser un número válido");
+            return false;
+        }
+        
+        if (!esFechaValida(fecha)) {
+            DialogosUtil.mostrarError("Formato de fecha inválido. Use: YYYY-MM-DD");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private boolean esTipoServicioValido(String tipo) {
+        return tipo.matches("LUZ|AGUA|ALICUOTA|GAS|OTRO");
+    }
+    
+    private boolean esNumeroValido(String numero) {
+        try {
+            Double.parseDouble(numero);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    private boolean esFechaValida(String fecha) {
+        return fecha.matches("\\d{4}-\\d{2}-\\d{2}");
+    }
+    
     @FXML
     private void crearPedido() {
+        String descripcion = txtDescripcionPedido.getText().trim();
+        String tipo = txtTipoPedido.getText().trim();
+        
+        if (!validarCamposPedido(descripcion, tipo)) {
+            return;
+        }
+        
         try {
-            String descripcion = txtDescripcionPedido.getText().trim();
-            String tipo = txtTipoPedido.getText().trim();
-            
-            if (descripcion.isEmpty() || tipo.isEmpty()) {
-                DialogosUtil.mostrarError("Complete todos los campos");
-                return;
-            }
-            
             residente.crearPedidoGUI(descripcion, tipo);
             DialogosUtil.mostrarExito("Pedido creado correctamente");
             limpiarCamposPedido();
@@ -133,25 +179,69 @@ public class ResidenteController implements Initializable {
         }
     }
     
+    private boolean validarCamposPedido(String descripcion, String tipo) {
+        if (descripcion.isEmpty() || tipo.isEmpty()) {
+            DialogosUtil.mostrarError("Complete todos los campos");
+            return false;
+        }
+        
+        if (!esTipoPedidoValido(tipo)) {
+            DialogosUtil.mostrarError("Tipo inválido. Use: ENCARGO, SERVICIO, PRODUCTO u OTRO");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private boolean esTipoPedidoValido(String tipo) {
+        return tipo.matches("ENCARGO|SERVICIO|PRODUCTO|OTRO");
+    }
+    
     @FXML
     private void activarEmergencia() {
+        String tipo = txtTipoEmergencia.getText().trim();
+        String descripcion = txtDescripcionEmergencia.getText().trim();
+        String ubicacion = txtUbicacionEmergencia.getText().trim();
+        String prioridad = txtPrioridad.getText().trim();
+        
+        if (!validarCamposEmergencia(tipo, descripcion, ubicacion, prioridad)) {
+            return;
+        }
+        
         try {
-            String tipo = txtTipoEmergencia.getText().trim();
-            String descripcion = txtDescripcionEmergencia.getText().trim();
-            String ubicacion = txtUbicacionEmergencia.getText().trim();
-            String prioridad = txtPrioridad.getText().trim();
-            
-            if (tipo.isEmpty() || descripcion.isEmpty() || ubicacion.isEmpty() || prioridad.isEmpty()) {
-                DialogosUtil.mostrarError("Complete todos los campos");
-                return;
-            }
-            
             residente.activarEmergenciaGUI(tipo, descripcion, ubicacion, prioridad);
             DialogosUtil.mostrarExito("Emergencia activada correctamente");
             limpiarCamposEmergencia();
         } catch (Exception e) {
             DialogosUtil.mostrarError("Error: " + e.getMessage());
         }
+    }
+    
+    private boolean validarCamposEmergencia(String tipo, String descripcion, String ubicacion, String prioridad) {
+        if (tipo.isEmpty() || descripcion.isEmpty() || ubicacion.isEmpty() || prioridad.isEmpty()) {
+            DialogosUtil.mostrarError("Complete todos los campos");
+            return false;
+        }
+        
+        if (!esTipoEmergenciaValido(tipo)) {
+            DialogosUtil.mostrarError("Tipo de emergencia inválido");
+            return false;
+        }
+        
+        if (!esPrioridadValida(prioridad)) {
+            DialogosUtil.mostrarError("Prioridad inválida. Use: BAJA, MEDIA, ALTA o CRITICA");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private boolean esTipoEmergenciaValido(String tipo) {
+        return tipo.matches("MEDICA|INCENDIO|ROBO|ACCIDENTE|FALLA_ELECTRICA|FALLA_PLOMERIA|OTRA");
+    }
+    
+    private boolean esPrioridadValida(String prioridad) {
+        return prioridad.matches("BAJA|MEDIA|ALTA|CRITICA");
     }
     
     @FXML
@@ -174,6 +264,47 @@ public class ResidenteController implements Initializable {
         } catch (Exception e) {
             DialogosUtil.mostrarError("Error: " + e.getMessage());
         }
+    }
+    
+    @FXML
+    private void refrescarPagos() {
+        cargarPagos();
+        DialogosUtil.mostrarExito("Pagos actualizados");
+    }
+    
+    @FXML
+    private void refrescarPedidos() {
+        cargarPedidos();
+        DialogosUtil.mostrarExito("Pedidos actualizados");
+    }
+    
+    @FXML
+    private void refrescarAvisos() {
+        cargarAvisos();
+        DialogosUtil.mostrarExito("Avisos actualizados");
+    }
+    
+    @FXML
+    private void verDetalleAviso() {
+        Aviso avisoSeleccionado = obtenerAvisoSeleccionado();
+        if (avisoSeleccionado == null) {
+            DialogosUtil.mostrarError("Seleccione un aviso para ver los detalles");
+            return;
+        }
+        
+        String detalle = crearDetalleAviso(avisoSeleccionado);
+        DialogosUtil.mostrarAlerta("Detalle del Aviso", detalle, Alert.AlertType.INFORMATION);
+    }
+    
+    private Aviso obtenerAvisoSeleccionado() {
+        return (Aviso) tablaAvisos.getSelectionModel().getSelectedItem();
+    }
+    
+    private String crearDetalleAviso(Aviso aviso) {
+        return "Título: " + aviso.getTitulo() + "\n\n" +
+               "Mensaje: " + aviso.getMensaje() + "\n\n" +
+               "Tipo: " + aviso.getTipo() + "\n" +
+               "Fecha: " + aviso.getFechaPublicacion();
     }
     
     @FXML

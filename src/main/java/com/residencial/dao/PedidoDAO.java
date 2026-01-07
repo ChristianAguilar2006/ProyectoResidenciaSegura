@@ -33,28 +33,32 @@ public class PedidoDAO {
         List<Pedido> listaPedidos = new ArrayList<>();
         String sql = "SELECT * FROM pedidos WHERE id_usuario = ? ORDER BY fecha_solicitud DESC";
         
-        Connection con = ConexionBD.getConexion();
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        pstmt.setInt(1, idUsuario);
+        Connection conexion = ConexionBD.getConexion();
+        PreparedStatement consulta = conexion.prepareStatement(sql);
+        consulta.setInt(1, idUsuario);
         
-        ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            Pedido pedido = new Pedido();
-            pedido.setIdPedido(rs.getInt("id_pedido"));
-            pedido.setIdUsuario(rs.getInt("id_usuario"));
-            pedido.setDescripcion(rs.getString("descripcion"));
-            pedido.setTipoPedido(rs.getString("tipo_pedido"));
-            pedido.setFechaSolicitud(rs.getTimestamp("fecha_solicitud"));
-            pedido.setFechaEntregaEstimada(rs.getDate("fecha_entrega_estimada"));
-            pedido.setEstado(rs.getString("estado"));
-            pedido.setCosto(rs.getBigDecimal("costo"));
-            
+        ResultSet resultados = consulta.executeQuery();
+        while (resultados.next()) {
+            Pedido pedido = crearPedidoDesdeResultado(resultados);
             listaPedidos.add(pedido);
         }
         
-        rs.close();
-        pstmt.close();
+        resultados.close();
+        consulta.close();
         return listaPedidos;
+    }
+    
+    private Pedido crearPedidoDesdeResultado(ResultSet resultados) throws SQLException {
+        Pedido pedido = new Pedido();
+        pedido.setIdPedido(resultados.getInt("id_pedido"));
+        pedido.setIdUsuario(resultados.getInt("id_usuario"));
+        pedido.setDescripcion(resultados.getString("descripcion"));
+        pedido.setTipoPedido(resultados.getString("tipo_pedido"));
+        pedido.setFechaSolicitud(resultados.getTimestamp("fecha_solicitud"));
+        pedido.setFechaEntregaEstimada(resultados.getDate("fecha_entrega_estimada"));
+        pedido.setEstado(resultados.getString("estado"));
+        pedido.setCosto(resultados.getBigDecimal("costo"));
+        return pedido;
     }
     
     public boolean actualizarEstado(int idPedido, String nuevoEstado) throws SQLException {

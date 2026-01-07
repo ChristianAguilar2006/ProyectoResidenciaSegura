@@ -34,28 +34,32 @@ public class PagoDAO {
         List<Pago> listaPagos = new ArrayList<>();
         String sql = "SELECT * FROM pagos WHERE id_usuario = ? ORDER BY fecha_pago DESC";
         
-        Connection con = ConexionBD.getConexion();
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        pstmt.setInt(1, idUsuario);
+        Connection conexion = ConexionBD.getConexion();
+        PreparedStatement consulta = conexion.prepareStatement(sql);
+        consulta.setInt(1, idUsuario);
         
-        ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            Pago pago = new Pago();
-            pago.setIdPago(rs.getInt("id_pago"));
-            pago.setIdUsuario(rs.getInt("id_usuario"));
-            pago.setTipoServicio(rs.getString("tipo_servicio"));
-            pago.setMonto(rs.getBigDecimal("monto"));
-            pago.setFechaPago(rs.getTimestamp("fecha_pago"));
-            pago.setFechaVencimiento(rs.getDate("fecha_vencimiento"));
-            pago.setEstado(rs.getString("estado"));
-            pago.setMetodoPago(rs.getString("metodo_pago"));
-            
+        ResultSet resultados = consulta.executeQuery();
+        while (resultados.next()) {
+            Pago pago = crearPagoDesdeResultado(resultados);
             listaPagos.add(pago);
         }
         
-        rs.close();
-        pstmt.close();
+        resultados.close();
+        consulta.close();
         return listaPagos;
+    }
+    
+    private Pago crearPagoDesdeResultado(ResultSet resultados) throws SQLException {
+        Pago pago = new Pago();
+        pago.setIdPago(resultados.getInt("id_pago"));
+        pago.setIdUsuario(resultados.getInt("id_usuario"));
+        pago.setTipoServicio(resultados.getString("tipo_servicio"));
+        pago.setMonto(resultados.getBigDecimal("monto"));
+        pago.setFechaPago(resultados.getTimestamp("fecha_pago"));
+        pago.setFechaVencimiento(resultados.getDate("fecha_vencimiento"));
+        pago.setEstado(resultados.getString("estado"));
+        pago.setMetodoPago(resultados.getString("metodo_pago"));
+        return pago;
     }
     
     public boolean marcarComoPagado(int idPago, String metodoPago) throws SQLException {

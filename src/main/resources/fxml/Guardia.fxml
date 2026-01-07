@@ -37,6 +37,7 @@
                 <HBox spacing="10.0">
                   <children>
                     <Button mnemonicParsing="false" onAction="#refrescarEmergencias" text="Refrescar" />
+                    <Button mnemonicParsing="false" onAction="#verDetalleEmergencia" text="Ver Detalle" />
                   </children>
                 </HBox>
                 <TableView fx:id="tablaEmergencias" prefHeight="550.0" prefWidth="860.0" />
@@ -60,6 +61,24 @@
                 <TextField fx:id="txtIdEmergencia" promptText="ID de la Emergencia" prefWidth="400.0" />
                 <TextField fx:id="txtNuevoEstado" promptText="Nuevo Estado (EN_ATENCION, RESUELTA)" prefWidth="400.0" />
                 <Button mnemonicParsing="false" onAction="#atenderEmergencia" text="Actualizar Estado" />
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Cerrar Sesión">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <VBox alignment="CENTER" layoutX="50.0" layoutY="50.0" spacing="20.0">
+              <children>
+                <Label text="¿Desea cerrar sesión?">
+                  <font>
+                    <Font name="System Bold" size="18.0" />
+                  </font>
+                </Label>
+                <Button mnemonicParsing="false" onAction="#cerrarSesion" text="Cerrar Sesión" />
               </children>
             </VBox>
           </children>

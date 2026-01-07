@@ -102,14 +102,30 @@ public class Administrador extends Usuario implements IMenuAdministrador {
     }
     
     public void crearUsuarioGUI(String nombre, String correo, String contrasena, String rol, String departamento, String bloque) throws Exception {
-        Usuario usuario = new Usuario(nombre, correo, contrasena, rol, departamento, bloque);
+        Usuario nuevoUsuario = crearUsuario(nombre, correo, contrasena, rol, departamento, bloque);
+        guardarUsuario(nuevoUsuario);
+    }
+    
+    private Usuario crearUsuario(String nombre, String correo, String contrasena, String rol, String departamento, String bloque) {
+        return new Usuario(nombre, correo, contrasena, rol, departamento, bloque);
+    }
+    
+    private void guardarUsuario(Usuario usuario) throws Exception {
         if (!usuarioDAO.crear(usuario)) {
             throw new Exception("Error al crear el usuario");
         }
     }
     
     public void crearAvisoGUI(String titulo, String mensaje, String tipo) throws Exception {
-        Aviso aviso = new Aviso(this.getIdUsuario(), titulo, mensaje, tipo);
+        Aviso nuevoAviso = crearAviso(titulo, mensaje, tipo);
+        guardarAviso(nuevoAviso);
+    }
+    
+    private Aviso crearAviso(String titulo, String mensaje, String tipo) {
+        return new Aviso(this.getIdUsuario(), titulo, mensaje, tipo);
+    }
+    
+    private void guardarAviso(Aviso aviso) throws Exception {
         if (!avisoDAO.crear(aviso)) {
             throw new Exception("Error al crear el aviso");
         }
@@ -117,6 +133,16 @@ public class Administrador extends Usuario implements IMenuAdministrador {
     
     public List<Aviso> obtenerAvisos() throws Exception {
         return avisoDAO.obtenerActivos();
+    }
+    
+    public void eliminarAvisoGUI(int idAviso) throws Exception {
+        if (!avisoDAO.eliminar(idAviso)) {
+            throw new Exception("Error al eliminar el aviso");
+        }
+    }
+    
+    public List<Usuario> obtenerUsuarios() throws Exception {
+        return usuarioDAO.obtenerTodos();
     }
     
     @Override

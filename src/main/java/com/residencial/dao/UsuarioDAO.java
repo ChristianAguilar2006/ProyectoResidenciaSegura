@@ -6,36 +6,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioDAO {
     
     public Usuario login(String correo, String contraseña) throws SQLException {
         String sql = "SELECT * FROM usuarios WHERE correo = ? AND contraseña = ? AND activo = TRUE";
         
-        Connection con = ConexionBD.getConexion();
-        PreparedStatement pstmt = con.prepareStatement(sql);
+        Connection conexion = ConexionBD.getConexion();
+        PreparedStatement consulta = conexion.prepareStatement(sql);
         
-        pstmt.setString(1, correo);
-        pstmt.setString(2, contraseña);
+        consulta.setString(1, correo);
+        consulta.setString(2, contraseña);
         
-        ResultSet rs = pstmt.executeQuery();
-        if (rs.next()) {
-            Usuario usuario = new Usuario();
-            usuario.setIdUsuario(rs.getInt("id_usuario"));
-            usuario.setNombre(rs.getString("nombre"));
-            usuario.setCorreo(rs.getString("correo"));
-            usuario.setRol(rs.getString("rol"));
-            usuario.setDepartamento(rs.getString("departamento"));
-            usuario.setBloque(rs.getString("bloque"));
-            usuario.setTelefono(rs.getString("telefono"));
-            
-            rs.close();
-            pstmt.close();
+        ResultSet resultados = consulta.executeQuery();
+        if (resultados.next()) {
+            Usuario usuario = crearUsuarioDesdeResultado(resultados);
+            resultados.close();
+            consulta.close();
             return usuario;
         }
         
-        rs.close();
-        pstmt.close();
+        resultados.close();
+        consulta.close();
         return null;
     }
     
@@ -77,6 +71,36 @@ public class UsuarioDAO {
         pstmt.close();
         
         return filasAfectadas > 0;
+    }
+    
+    public List<Usuario> obtenerTodos() throws SQLException {
+        List<Usuario> listaUsuarios = new ArrayList<>();
+        String sql = "SELECT * FROM usuarios WHERE activo = TRUE ORDER BY nombre";
+        
+        Connection conexion = ConexionBD.getConexion();
+        PreparedStatement consulta = conexion.prepareStatement(sql);
+        ResultSet resultados = consulta.executeQuery();
+        
+        while (resultados.next()) {
+            Usuario usuario = crearUsuarioDesdeResultado(resultados);
+            listaUsuarios.add(usuario);
+        }
+        
+        resultados.close();
+        consulta.close();
+        return listaUsuarios;
+    }
+    
+    private Usuario crearUsuarioDesdeResultado(ResultSet resultados) throws SQLException {
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(resultados.getInt("id_usuario"));
+        usuario.setNombre(resultados.getString("nombre"));
+        usuario.setCorreo(resultados.getString("correo"));
+        usuario.setRol(resultados.getString("rol"));
+        usuario.setDepartamento(resultados.getString("departamento"));
+        usuario.setBloque(resultados.getString("bloque"));
+        usuario.setTelefono(resultados.getString("telefono"));
+        return usuario;
     }
 }
 

@@ -23,8 +23,6 @@ public class Usuario {
         this.departamento = departamento;
         this.bloque = bloque;
     }
-    
-    // Getters y Setters
     public int getIdUsuario() {
         return idUsuario;
     }

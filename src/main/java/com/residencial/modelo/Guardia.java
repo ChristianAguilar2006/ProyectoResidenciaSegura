@@ -114,7 +114,8 @@ public class Guardia extends Usuario implements IMenuGuardia {
     }
     
     public void atenderEmergenciaGUI(int idEmergencia, String nuevoEstado) throws Exception {
-        if (!emergenciaDAO.actualizarEstado(idEmergencia, nuevoEstado, this.getIdUsuario())) {
+        boolean exito = emergenciaDAO.actualizarEstado(idEmergencia, nuevoEstado, this.getIdUsuario());
+        if (!exito) {
             throw new Exception("Error al actualizar la emergencia");
         }
     }

@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import com.residencial.modelo.Emergencia;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -37,19 +38,20 @@ public class GuardiaController implements Initializable {
     }
     
     private void configurarTablas() {
-        if (tablaEmergencias != null) {
-            TableColumn colId = new TableColumn("ID");
-            colId.setCellValueFactory(new PropertyValueFactory<>("idEmergencia"));
-            TableColumn colTipo = new TableColumn("Tipo");
-            colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-            TableColumn colPrioridad = new TableColumn("Prioridad");
-            colPrioridad.setCellValueFactory(new PropertyValueFactory<>("prioridad"));
-            TableColumn colEstado = new TableColumn("Estado");
-            colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-            TableColumn colUbicacion = new TableColumn("Ubicación");
-            colUbicacion.setCellValueFactory(new PropertyValueFactory<>("ubicacion"));
-            tablaEmergencias.getColumns().addAll(colId, colTipo, colPrioridad, colEstado, colUbicacion);
-        }
+        if (tablaEmergencias == null) return;
+        
+        tablaEmergencias.getColumns().clear();
+        tablaEmergencias.getColumns().add(crearColumna("ID", "idEmergencia"));
+        tablaEmergencias.getColumns().add(crearColumna("Tipo", "tipo"));
+        tablaEmergencias.getColumns().add(crearColumna("Prioridad", "prioridad"));
+        tablaEmergencias.getColumns().add(crearColumna("Estado", "estado"));
+        tablaEmergencias.getColumns().add(crearColumna("Ubicación", "ubicacion"));
+    }
+    
+    private TableColumn crearColumna(String nombre, String propiedad) {
+        TableColumn columna = new TableColumn(nombre);
+        columna.setCellValueFactory(new PropertyValueFactory<>(propiedad));
+        return columna;
     }
     
     private void cargarDatosPerfil() {
@@ -59,16 +61,15 @@ public class GuardiaController implements Initializable {
     
     @FXML
     private void atenderEmergencia() {
+        String idTexto = txtIdEmergencia.getText().trim();
+        String nuevoEstado = txtNuevoEstado.getText().trim();
+        
+        if (!validarCamposAtenderEmergencia(idTexto, nuevoEstado)) {
+            return;
+        }
+        
         try {
-            String idStr = txtIdEmergencia.getText().trim();
-            String nuevoEstado = txtNuevoEstado.getText().trim();
-            
-            if (idStr.isEmpty() || nuevoEstado.isEmpty()) {
-                DialogosUtil.mostrarError("Complete todos los campos");
-                return;
-            }
-            
-            int idEmergencia = Integer.parseInt(idStr);
+            int idEmergencia = Integer.parseInt(idTexto);
             guardia.atenderEmergenciaGUI(idEmergencia, nuevoEstado);
             DialogosUtil.mostrarExito("Emergencia actualizada correctamente");
             limpiarCamposEmergencia();
@@ -80,9 +81,53 @@ public class GuardiaController implements Initializable {
         }
     }
     
+    private boolean validarCamposAtenderEmergencia(String idTexto, String nuevoEstado) {
+        if (idTexto.isEmpty() || nuevoEstado.isEmpty()) {
+            DialogosUtil.mostrarError("Complete todos los campos");
+            return false;
+        }
+        
+        if (!esEstadoEmergenciaValido(nuevoEstado)) {
+            DialogosUtil.mostrarError("Estado inválido. Use: EN_ATENCION o RESUELTA");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private boolean esEstadoEmergenciaValido(String estado) {
+        return estado.matches("EN_ATENCION|RESUELTA");
+    }
+    
+    @FXML
+    private void verDetalleEmergencia() {
+        Emergencia emergenciaSeleccionada = obtenerEmergenciaSeleccionada();
+        if (emergenciaSeleccionada == null) {
+            DialogosUtil.mostrarError("Seleccione una emergencia para ver los detalles");
+            return;
+        }
+        
+        String detalle = crearDetalleEmergencia(emergenciaSeleccionada);
+        DialogosUtil.mostrarAlerta("Detalle de la Emergencia", detalle, Alert.AlertType.INFORMATION);
+    }
+    
+    private Emergencia obtenerEmergenciaSeleccionada() {
+        return (Emergencia) tablaEmergencias.getSelectionModel().getSelectedItem();
+    }
+    
+    private String crearDetalleEmergencia(Emergencia emergencia) {
+        return "ID: " + emergencia.getIdEmergencia() + "\n\n" +
+               "Tipo: " + emergencia.getTipo() + "\n" +
+               "Prioridad: " + emergencia.getPrioridad() + "\n" +
+               "Estado: " + emergencia.getEstado() + "\n" +
+               "Ubicación: " + emergencia.getUbicacion() + "\n\n" +
+               "Descripción:\n" + emergencia.getDescripcion();
+    }
+    
     @FXML
     private void refrescarEmergencias() {
         cargarEmergencias();
+        DialogosUtil.mostrarExito("Emergencias actualizadas");
     }
     
     @FXML

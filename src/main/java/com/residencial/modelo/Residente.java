@@ -267,33 +267,74 @@ public class Residente extends Usuario implements IMenuResidente {
         }
     }
     
-    public void pagarServicioGUI(String tipo, String montoStr, String fechaStr) throws Exception {
-        BigDecimal monto = new BigDecimal(montoStr);
-        Date fechaVencimiento = Date.valueOf(fechaStr);
-        Pago pago = new Pago(this.getIdUsuario(), tipo, monto, fechaVencimiento);
+    public void pagarServicioGUI(String tipo, String montoTexto, String fechaTexto) throws Exception {
+        BigDecimal monto = convertirAMonto(montoTexto);
+        Date fechaVencimiento = convertirAFecha(fechaTexto);
+        Pago nuevoPago = crearPago(tipo, monto, fechaVencimiento);
+        guardarPago(nuevoPago);
+    }
+    
+    private BigDecimal convertirAMonto(String montoTexto) {
+        return new BigDecimal(montoTexto);
+    }
+    
+    private Date convertirAFecha(String fechaTexto) {
+        return Date.valueOf(fechaTexto);
+    }
+    
+    private Pago crearPago(String tipo, BigDecimal monto, Date fechaVencimiento) {
+        return new Pago(this.getIdUsuario(), tipo, monto, fechaVencimiento);
+    }
+    
+    private void guardarPago(Pago pago) throws Exception {
         if (!pagoDAO.crear(pago)) {
             throw new Exception("Error al registrar el pago");
         }
     }
     
     public void crearPedidoGUI(String descripcion, String tipo) throws Exception {
-        Pedido pedido = new Pedido(this.getIdUsuario(), descripcion, tipo);
+        Pedido nuevoPedido = crearPedido(descripcion, tipo);
+        guardarPedido(nuevoPedido);
+    }
+    
+    private Pedido crearPedido(String descripcion, String tipo) {
+        return new Pedido(this.getIdUsuario(), descripcion, tipo);
+    }
+    
+    private void guardarPedido(Pedido pedido) throws Exception {
         if (!pedidoDAO.crear(pedido)) {
             throw new Exception("Error al crear el pedido");
         }
     }
     
     public void activarEmergenciaGUI(String tipo, String descripcion, String ubicacion, String prioridad) throws Exception {
+        Emergencia nuevaEmergencia = crearEmergencia(tipo, descripcion, ubicacion, prioridad);
+        guardarEmergencia(nuevaEmergencia);
+    }
+    
+    private Emergencia crearEmergencia(String tipo, String descripcion, String ubicacion, String prioridad) {
         Emergencia emergencia = new Emergencia(this.getIdUsuario(), tipo, descripcion, ubicacion);
         emergencia.setPrioridad(prioridad);
+        return emergencia;
+    }
+    
+    private void guardarEmergencia(Emergencia emergencia) throws Exception {
         if (!emergenciaDAO.crear(emergencia)) {
             throw new Exception("Error al activar la emergencia");
         }
     }
     
     public void actualizarPerfilGUI(String nombre, String telefono) throws Exception {
+        actualizarDatosPersonales(nombre, telefono);
+        guardarCambiosPerfil();
+    }
+    
+    private void actualizarDatosPersonales(String nombre, String telefono) {
         this.setNombre(nombre);
         this.setTelefono(telefono);
+    }
+    
+    private void guardarCambiosPerfil() throws Exception {
         if (!usuarioDAO.actualizar(this)) {
             throw new Exception("Error al actualizar el perfil");
         }

@@ -33,26 +33,31 @@ public class AvisoDAO {
         List<Aviso> listaAvisos = new ArrayList<>();
         String sql = "SELECT * FROM avisos WHERE activo = TRUE ORDER BY fecha_publicacion DESC";
         
-        Connection con = ConexionBD.getConexion();
-        PreparedStatement pstmt = con.prepareStatement(sql);
-        ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            Aviso aviso = new Aviso();
-            aviso.setIdAviso(rs.getInt("id_aviso"));
-            aviso.setIdAdministrador(rs.getInt("id_administrador"));
-            aviso.setTitulo(rs.getString("titulo"));
-            aviso.setMensaje(rs.getString("mensaje"));
-            aviso.setTipo(rs.getString("tipo"));
-            aviso.setFechaPublicacion(rs.getTimestamp("fecha_publicacion"));
-            aviso.setFechaExpiracion(rs.getDate("fecha_expiracion"));
-            aviso.setActivo(rs.getBoolean("activo"));
-            
+        Connection conexion = ConexionBD.getConexion();
+        PreparedStatement consulta = conexion.prepareStatement(sql);
+        ResultSet resultados = consulta.executeQuery();
+        
+        while (resultados.next()) {
+            Aviso aviso = crearAvisoDesdeResultado(resultados);
             listaAvisos.add(aviso);
         }
         
-        rs.close();
-        pstmt.close();
+        resultados.close();
+        consulta.close();
         return listaAvisos;
+    }
+    
+    private Aviso crearAvisoDesdeResultado(ResultSet resultados) throws SQLException {
+        Aviso aviso = new Aviso();
+        aviso.setIdAviso(resultados.getInt("id_aviso"));
+        aviso.setIdAdministrador(resultados.getInt("id_administrador"));
+        aviso.setTitulo(resultados.getString("titulo"));
+        aviso.setMensaje(resultados.getString("mensaje"));
+        aviso.setTipo(resultados.getString("tipo"));
+        aviso.setFechaPublicacion(resultados.getTimestamp("fecha_publicacion"));
+        aviso.setFechaExpiracion(resultados.getDate("fecha_expiracion"));
+        aviso.setActivo(resultados.getBoolean("activo"));
+        return aviso;
     }
     
     public boolean eliminar(int idAviso) throws SQLException {
