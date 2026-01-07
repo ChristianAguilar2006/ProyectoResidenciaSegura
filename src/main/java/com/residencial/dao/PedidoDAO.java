@@ -39,26 +39,21 @@ public class PedidoDAO {
         
         ResultSet resultados = consulta.executeQuery();
         while (resultados.next()) {
-            Pedido pedido = crearPedidoDesdeResultado(resultados);
+            Pedido pedido = new Pedido();
+            pedido.setIdPedido(resultados.getInt("id_pedido"));
+            pedido.setIdUsuario(resultados.getInt("id_usuario"));
+            pedido.setDescripcion(resultados.getString("descripcion"));
+            pedido.setTipoPedido(resultados.getString("tipo_pedido"));
+            pedido.setFechaSolicitud(resultados.getTimestamp("fecha_solicitud"));
+            pedido.setFechaEntregaEstimada(resultados.getDate("fecha_entrega_estimada"));
+            pedido.setEstado(resultados.getString("estado"));
+            pedido.setCosto(resultados.getBigDecimal("costo"));
             listaPedidos.add(pedido);
         }
         
         resultados.close();
         consulta.close();
         return listaPedidos;
-    }
-    
-    private Pedido crearPedidoDesdeResultado(ResultSet resultados) throws SQLException {
-        Pedido pedido = new Pedido();
-        pedido.setIdPedido(resultados.getInt("id_pedido"));
-        pedido.setIdUsuario(resultados.getInt("id_usuario"));
-        pedido.setDescripcion(resultados.getString("descripcion"));
-        pedido.setTipoPedido(resultados.getString("tipo_pedido"));
-        pedido.setFechaSolicitud(resultados.getTimestamp("fecha_solicitud"));
-        pedido.setFechaEntregaEstimada(resultados.getDate("fecha_entrega_estimada"));
-        pedido.setEstado(resultados.getString("estado"));
-        pedido.setCosto(resultados.getBigDecimal("costo"));
-        return pedido;
     }
     
     public boolean actualizarEstado(int idPedido, String nuevoEstado) throws SQLException {

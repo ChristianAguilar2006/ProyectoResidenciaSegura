@@ -15,8 +15,8 @@ public class Administrador extends Usuario implements IMenuAdministrador {
         super();
     }
     
-    public Administrador(String nombre, String correo, String contraseña) {
-        super(nombre, correo, contraseña, "ADMINISTRADOR", "ADMIN", "ADMIN");
+    public Administrador(String nombre, String correo, String contrasena) {
+        super(nombre, correo, contrasena, "ADMINISTRADOR", "ADMIN", "ADMIN");
     }
     
     public void crearUsuario() {
@@ -27,8 +27,8 @@ public class Administrador extends Usuario implements IMenuAdministrador {
         System.out.print("Correo: ");
         String correo = scanner.nextLine();
         
-        System.out.print("Contraseña: ");
-        String contraseña = scanner.nextLine();
+        System.out.print("Contrasena: ");
+        String contrasena = scanner.nextLine();
         
         System.out.print("Rol (RESIDENTE, ADMINISTRADOR, GUARDIA): ");
         String rol = scanner.nextLine().toUpperCase();
@@ -39,7 +39,7 @@ public class Administrador extends Usuario implements IMenuAdministrador {
         System.out.print("Bloque: ");
         String bloque = scanner.nextLine();
         
-        Usuario usuario = new Usuario(nombre, correo, contraseña, rol, departamento, bloque);
+        Usuario usuario = new Usuario(nombre, correo, contrasena, rol, departamento, bloque);
         
         try {
             if (usuarioDAO.crear(usuario)) {
@@ -54,7 +54,7 @@ public class Administrador extends Usuario implements IMenuAdministrador {
     
     public void crearAviso() {
         System.out.println("\n--- CREAR AVISO ---");
-        System.out.print("Título: ");
+        System.out.print("Titulo: ");
         String titulo = scanner.nextLine();
         
         System.out.print("Mensaje: ");
@@ -98,65 +98,22 @@ public class Administrador extends Usuario implements IMenuAdministrador {
     public void verReportes() {
         System.out.println("\n--- REPORTES ---");
         System.out.println("Funcionalidad en desarrollo");
-        System.out.println("Aquí se mostrarían reportes de pagos, pedidos, emergencias, etc.");
+        System.out.println("Aqui se mostrarian reportes de pagos, pedidos, emergencias, etc.");
     }
     
-    public void crearUsuarioGUI(String nombre, String correo, String contrasena, String rol, String departamento, String bloque) throws Exception {
-        Usuario nuevoUsuario = crearUsuario(nombre, correo, contrasena, rol, departamento, bloque);
-        guardarUsuario(nuevoUsuario);
-    }
-    
-    private Usuario crearUsuario(String nombre, String correo, String contrasena, String rol, String departamento, String bloque) {
-        return new Usuario(nombre, correo, contrasena, rol, departamento, bloque);
-    }
-    
-    private void guardarUsuario(Usuario usuario) throws Exception {
-        if (!usuarioDAO.crear(usuario)) {
-            throw new Exception("Error al crear el usuario");
-        }
-    }
-    
-    public void crearAvisoGUI(String titulo, String mensaje, String tipo) throws Exception {
-        Aviso nuevoAviso = crearAviso(titulo, mensaje, tipo);
-        guardarAviso(nuevoAviso);
-    }
-    
-    private Aviso crearAviso(String titulo, String mensaje, String tipo) {
-        return new Aviso(this.getIdUsuario(), titulo, mensaje, tipo);
-    }
-    
-    private void guardarAviso(Aviso aviso) throws Exception {
-        if (!avisoDAO.crear(aviso)) {
-            throw new Exception("Error al crear el aviso");
-        }
-    }
-    
-    public List<Aviso> obtenerAvisos() throws Exception {
-        return avisoDAO.obtenerActivos();
-    }
-    
-    public void eliminarAvisoGUI(int idAviso) throws Exception {
-        if (!avisoDAO.eliminar(idAviso)) {
-            throw new Exception("Error al eliminar el aviso");
-        }
-    }
-    
-    public List<Usuario> obtenerUsuarios() throws Exception {
-        return usuarioDAO.obtenerTodos();
-    }
     
     @Override
     public void mostrarMenu() {
-        System.out.println("\n--- MENÚ ADMINISTRADOR ---");
+        System.out.println("\n--- MENU ADMINISTRADOR ---");
         System.out.println("Usuario: " + this.getNombre());
         System.out.println("1. Ver Perfil");
         System.out.println("2. Gestionar Usuarios");
         System.out.println("3. Crear Aviso");
         System.out.println("4. Ver Avisos");
         System.out.println("5. Ver Reportes");
-        System.out.println("6. Cerrar Sesión");
+        System.out.println("6. Cerrar Sesion");
         System.out.println("7. Salir");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
     
     @Override
@@ -180,11 +137,11 @@ public class Administrador extends Usuario implements IMenuAdministrador {
             case 6:
                 break;
             case 7:
-                System.out.println("\n¡Hasta luego!");
+                System.out.println("\nHasta luego!");
                 System.exit(0);
                 break;
             default:
-                System.out.println("Opción inválida");
+                System.out.println("Opcion invalida");
         }
     }
     
@@ -196,7 +153,7 @@ public class Administrador extends Usuario implements IMenuAdministrador {
         System.out.println("Rol: " + this.getRol());
         System.out.println("Departamento: " + this.getDepartamento());
         System.out.println("Bloque: " + this.getBloque());
-        System.out.println("Teléfono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
+        System.out.println("Telefono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
     }
     
     private void gestionarUsuarios() {
@@ -208,11 +165,14 @@ public class Administrador extends Usuario implements IMenuAdministrador {
         try {
             int op = scanner.nextInt();
             scanner.nextLine();
-            if (op == 1) {
-                crearUsuario();
-            } else if (op == 2) {
-            } else {
-                System.out.println("Opcion invalida");
+            switch (op) {
+                case 1:
+                    crearUsuario();
+                    break;
+                case 2:
+                    break;
+                default:
+                    System.out.println("Opcion invalida");
             }
         } catch (Exception e) {
             scanner.nextLine();

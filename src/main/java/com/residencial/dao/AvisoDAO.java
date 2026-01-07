@@ -38,26 +38,21 @@ public class AvisoDAO {
         ResultSet resultados = consulta.executeQuery();
         
         while (resultados.next()) {
-            Aviso aviso = crearAvisoDesdeResultado(resultados);
+            Aviso aviso = new Aviso();
+            aviso.setIdAviso(resultados.getInt("id_aviso"));
+            aviso.setIdAdministrador(resultados.getInt("id_administrador"));
+            aviso.setTitulo(resultados.getString("titulo"));
+            aviso.setMensaje(resultados.getString("mensaje"));
+            aviso.setTipo(resultados.getString("tipo"));
+            aviso.setFechaPublicacion(resultados.getTimestamp("fecha_publicacion"));
+            aviso.setFechaExpiracion(resultados.getDate("fecha_expiracion"));
+            aviso.setActivo(resultados.getBoolean("activo"));
             listaAvisos.add(aviso);
         }
         
         resultados.close();
         consulta.close();
         return listaAvisos;
-    }
-    
-    private Aviso crearAvisoDesdeResultado(ResultSet resultados) throws SQLException {
-        Aviso aviso = new Aviso();
-        aviso.setIdAviso(resultados.getInt("id_aviso"));
-        aviso.setIdAdministrador(resultados.getInt("id_administrador"));
-        aviso.setTitulo(resultados.getString("titulo"));
-        aviso.setMensaje(resultados.getString("mensaje"));
-        aviso.setTipo(resultados.getString("tipo"));
-        aviso.setFechaPublicacion(resultados.getTimestamp("fecha_publicacion"));
-        aviso.setFechaExpiracion(resultados.getDate("fecha_expiracion"));
-        aviso.setActivo(resultados.getBoolean("activo"));
-        return aviso;
     }
     
     public boolean eliminar(int idAviso) throws SQLException {

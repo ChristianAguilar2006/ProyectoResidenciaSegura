@@ -5,7 +5,7 @@ public class Usuario {
     private int idUsuario;
     private String nombre;
     private String correo;
-    private String contraseña;
+    private String contrasena;
     private String rol;
     private String departamento;
     private String bloque;
@@ -14,11 +14,11 @@ public class Usuario {
     public Usuario() {
     }
     
-    public Usuario(String nombre, String correo, String contraseña, String rol, 
+    public Usuario(String nombre, String correo, String contrasena, String rol, 
                    String departamento, String bloque) {
         this.nombre = nombre;
         this.correo = correo;
-        this.contraseña = contraseña;
+        this.contrasena = contrasena;
         this.rol = rol;
         this.departamento = departamento;
         this.bloque = bloque;
@@ -47,12 +47,12 @@ public class Usuario {
         this.correo = correo;
     }
     
-    public String getContraseña() {
-        return contraseña;
+    public String getContrasena() {
+        return contrasena;
     }
     
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
     
     public String getRol() {

@@ -14,8 +14,8 @@ public class Guardia extends Usuario implements IMenuGuardia {
         super();
     }
     
-    public Guardia(String nombre, String correo, String contraseña) {
-        super(nombre, correo, contraseña, "GUARDIA", "SEGURIDAD", "ENTRADA");
+    public Guardia(String nombre, String correo, String contrasena) {
+        super(nombre, correo, contrasena, "GUARDIA", "SEGURIDAD", "ENTRADA");
     }
     
     public void verEmergenciasActivas() {
@@ -30,8 +30,8 @@ public class Guardia extends Usuario implements IMenuGuardia {
                     System.out.println("\nID: " + e.getIdEmergencia() + 
                                      " | Tipo: " + e.getTipo() + 
                                      " | Prioridad: " + e.getPrioridad());
-                    System.out.println("Descripción: " + e.getDescripcion());
-                    System.out.println("Ubicación: " + e.getUbicacion());
+                    System.out.println("Descripcion: " + e.getDescripcion());
+                    System.out.println("Ubicacion: " + e.getUbicacion());
                     System.out.println("Estado: " + e.getEstado());
                 }
             }
@@ -69,14 +69,14 @@ public class Guardia extends Usuario implements IMenuGuardia {
     
     @Override
     public void mostrarMenu() {
-        System.out.println("\n--- MENÚ GUARDIA ---");
+        System.out.println("\n--- MENU GUARDIA ---");
         System.out.println("Usuario: " + this.getNombre());
         System.out.println("1. Ver Perfil");
         System.out.println("2. Ver Emergencias Activas");
         System.out.println("3. Atender Emergencia");
-        System.out.println("4. Cerrar Sesión");
+        System.out.println("4. Cerrar Sesion");
         System.out.println("5. Salir");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
     
     @Override
@@ -94,11 +94,11 @@ public class Guardia extends Usuario implements IMenuGuardia {
             case 4:
                 break;
             case 5:
-                System.out.println("\n¡Hasta luego!");
+                System.out.println("\nHasta luego!");
                 System.exit(0);
                 break;
             default:
-                System.out.println("Opción inválida");
+                System.out.println("Opcion invalida");
         }
     }
     
@@ -110,18 +110,8 @@ public class Guardia extends Usuario implements IMenuGuardia {
         System.out.println("Rol: " + this.getRol());
         System.out.println("Departamento: " + this.getDepartamento());
         System.out.println("Bloque: " + this.getBloque());
-        System.out.println("Teléfono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
+        System.out.println("Telefono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
     }
     
-    public void atenderEmergenciaGUI(int idEmergencia, String nuevoEstado) throws Exception {
-        boolean exito = emergenciaDAO.actualizarEstado(idEmergencia, nuevoEstado, this.getIdUsuario());
-        if (!exito) {
-            throw new Exception("Error al actualizar la emergencia");
-        }
-    }
-    
-    public List<Emergencia> obtenerEmergenciasActivas() throws Exception {
-        return emergenciaDAO.obtenerActivas();
-    }
 }
 

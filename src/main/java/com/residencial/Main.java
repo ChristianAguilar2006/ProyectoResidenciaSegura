@@ -13,7 +13,7 @@ public class Main {
     
     public static void main(String[] args) {
         System.out.println("========================================");
-        System.out.println("  SISTEMA DE GESTIÓN RESIDENCIAL");
+        System.out.println("  SISTEMA DE GESTION RESIDENCIAL");
         System.out.println("========================================\n");
         
         boolean salir = false;
@@ -44,74 +44,82 @@ public class Main {
                         salir = true;
                         break;
                     default:
-                        System.out.println("Opción inválida");
+                        System.out.println("Opcion invalida");
                 }
             } else {
                 String rol = usuarioActual.getRol();
                 
-                if (rol.equals("RESIDENTE")) {
-                    Residente residente = convertirAResidente(usuarioActual);
-                    IMenuResidente menu = residente;
-                    menu.procesarOpcion(opcion);
-                    if (opcion == 9) {
-                        cerrarSesion();
-                    }
-                } else if (rol.equals("ADMINISTRADOR")) {
-                    Administrador admin = convertirAAdministrador(usuarioActual);
-                    IMenuAdministrador menu = admin;
-                    menu.procesarOpcion(opcion);
-                    if (opcion == 6) {
-                        cerrarSesion();
-                    }
-                } else if (rol.equals("GUARDIA")) {
-                    Guardia guardia = convertirAGuardia(usuarioActual);
-                    IMenuGuardia menu = guardia;
-                    menu.procesarOpcion(opcion);
-                    if (opcion == 4) {
-                        cerrarSesion();
-                    }
+                switch (rol) {
+                    case "RESIDENTE":
+                        Residente residente = convertirAResidente(usuarioActual);
+                        IMenuResidente menuResidente = residente;
+                        menuResidente.procesarOpcion(opcion);
+                        if (opcion == 9) {
+                            cerrarSesion();
+                        }
+                        break;
+                    case "ADMINISTRADOR":
+                        Administrador admin = convertirAAdministrador(usuarioActual);
+                        IMenuAdministrador menuAdmin = admin;
+                        menuAdmin.procesarOpcion(opcion);
+                        if (opcion == 6) {
+                            cerrarSesion();
+                        }
+                        break;
+                    case "GUARDIA":
+                        Guardia guardia = convertirAGuardia(usuarioActual);
+                        IMenuGuardia menuGuardia = guardia;
+                        menuGuardia.procesarOpcion(opcion);
+                        if (opcion == 4) {
+                            cerrarSesion();
+                        }
+                        break;
                 }
             }
         }
         
-        System.out.println("\n¡Hasta luego!");
+        System.out.println("\nHasta luego!");
         scanner.close();
     }
     
     private static void mostrarMenuPrincipal() {
-        System.out.println("\n--- MENÚ PRINCIPAL ---");
-        System.out.println("1. Iniciar Sesión");
+        System.out.println("\n--- MENU PRINCIPAL ---");
+        System.out.println("1. Iniciar Sesion");
         System.out.println("2. Salir");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
     
     private static void mostrarMenuUsuario() {
         String rol = usuarioActual.getRol();
         
-        if (rol.equals("RESIDENTE")) {
-            Residente residente = convertirAResidente(usuarioActual);
-            IMenuResidente menu = residente;
-            menu.mostrarMenu();
-        } else if (rol.equals("ADMINISTRADOR")) {
-            Administrador admin = convertirAAdministrador(usuarioActual);
-            IMenuAdministrador menu = admin;
-            menu.mostrarMenu();
-        } else if (rol.equals("GUARDIA")) {
-            Guardia guardia = convertirAGuardia(usuarioActual);
-            IMenuGuardia menu = guardia;
-            menu.mostrarMenu();
+        switch (rol) {
+            case "RESIDENTE":
+                Residente residente = convertirAResidente(usuarioActual);
+                IMenuResidente menuResidente = residente;
+                menuResidente.mostrarMenu();
+                break;
+            case "ADMINISTRADOR":
+                Administrador admin = convertirAAdministrador(usuarioActual);
+                IMenuAdministrador menuAdmin = admin;
+                menuAdmin.mostrarMenu();
+                break;
+            case "GUARDIA":
+                Guardia guardia = convertirAGuardia(usuarioActual);
+                IMenuGuardia menuGuardia = guardia;
+                menuGuardia.mostrarMenu();
+                break;
         }
     }
     
     private static void iniciarSesion() {
-        System.out.println("\n--- INICIAR SESIÓN ---");
+        System.out.println("\n--- INICIAR SESION ---");
         System.out.print("Correo: ");
         String correo = scanner.nextLine();
-        System.out.print("Contraseña: ");
-        String contraseña = scanner.nextLine();
+        System.out.print("Contrasena: ");
+        String contrasena = scanner.nextLine();
         
         try {
-            usuarioActual = usuarioDAO.login(correo, contraseña);
+            usuarioActual = usuarioDAO.login(correo, contrasena);
             if (usuarioActual != null) {
                 System.out.println("\nSesion iniciada correctamente");
                 System.out.println("Bienvenido, " + usuarioActual.getNombre());

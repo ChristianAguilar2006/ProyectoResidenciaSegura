@@ -40,26 +40,21 @@ public class PagoDAO {
         
         ResultSet resultados = consulta.executeQuery();
         while (resultados.next()) {
-            Pago pago = crearPagoDesdeResultado(resultados);
+            Pago pago = new Pago();
+            pago.setIdPago(resultados.getInt("id_pago"));
+            pago.setIdUsuario(resultados.getInt("id_usuario"));
+            pago.setTipoServicio(resultados.getString("tipo_servicio"));
+            pago.setMonto(resultados.getBigDecimal("monto"));
+            pago.setFechaPago(resultados.getTimestamp("fecha_pago"));
+            pago.setFechaVencimiento(resultados.getDate("fecha_vencimiento"));
+            pago.setEstado(resultados.getString("estado"));
+            pago.setMetodoPago(resultados.getString("metodo_pago"));
             listaPagos.add(pago);
         }
         
         resultados.close();
         consulta.close();
         return listaPagos;
-    }
-    
-    private Pago crearPagoDesdeResultado(ResultSet resultados) throws SQLException {
-        Pago pago = new Pago();
-        pago.setIdPago(resultados.getInt("id_pago"));
-        pago.setIdUsuario(resultados.getInt("id_usuario"));
-        pago.setTipoServicio(resultados.getString("tipo_servicio"));
-        pago.setMonto(resultados.getBigDecimal("monto"));
-        pago.setFechaPago(resultados.getTimestamp("fecha_pago"));
-        pago.setFechaVencimiento(resultados.getDate("fecha_vencimiento"));
-        pago.setEstado(resultados.getString("estado"));
-        pago.setMetodoPago(resultados.getString("metodo_pago"));
-        return pago;
     }
     
     public boolean marcarComoPagado(int idPago, String metodoPago) throws SQLException {

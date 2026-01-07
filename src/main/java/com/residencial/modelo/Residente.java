@@ -21,9 +21,9 @@ public class Residente extends Usuario implements IMenuResidente {
         super();
     }
     
-    public Residente(String nombre, String correo, String contraseña, 
+    public Residente(String nombre, String correo, String contrasena, 
                     String departamento, String bloque) {
-        super(nombre, correo, contraseña, "RESIDENTE", departamento, bloque);
+        super(nombre, correo, contrasena, "RESIDENTE", departamento, bloque);
     }
     
     public void pagarServicio() {
@@ -88,7 +88,7 @@ public class Residente extends Usuario implements IMenuResidente {
     
     public void crearPedido() {
         System.out.println("\n--- CREAR PEDIDO ---");
-        System.out.print("Descripción: ");
+        System.out.print("Descripcion: ");
         String descripcion = scanner.nextLine();
         
         System.out.print("Tipo (ENCARGO, SERVICIO, PRODUCTO, OTRO): ");
@@ -117,7 +117,7 @@ public class Residente extends Usuario implements IMenuResidente {
             } else {
                 for (Pedido pedido : pedidos) {
                     System.out.println("ID: " + pedido.getIdPedido() + 
-                                     " | Descripción: " + pedido.getDescripcion() + 
+                                     " | Descripcion: " + pedido.getDescripcion() + 
                                      " | Estado: " + pedido.getEstado());
                 }
             }
@@ -131,10 +131,10 @@ public class Residente extends Usuario implements IMenuResidente {
         System.out.print("Tipo (MEDICA, INCENDIO, ROBO, ACCIDENTE, FALLA_ELECTRICA, FALLA_PLOMERIA, OTRA): ");
         String tipo = scanner.nextLine().toUpperCase();
         
-        System.out.print("Descripción: ");
+        System.out.print("Descripcion: ");
         String descripcion = scanner.nextLine();
         
-        System.out.print("Ubicación: ");
+        System.out.print("Ubicacion: ");
         String ubicacion = scanner.nextLine();
         
         System.out.print("Prioridad (BAJA, MEDIA, ALTA, CRITICA): ");
@@ -175,7 +175,7 @@ public class Residente extends Usuario implements IMenuResidente {
     
     @Override
     public void mostrarMenu() {
-        System.out.println("\n--- MENÚ RESIDENTE ---");
+        System.out.println("\n--- MENU RESIDENTE ---");
         System.out.println("Usuario: " + this.getNombre());
         System.out.println("1. Ver Perfil");
         System.out.println("2. Actualizar Perfil");
@@ -185,9 +185,9 @@ public class Residente extends Usuario implements IMenuResidente {
         System.out.println("6. Ver Mis Pedidos");
         System.out.println("7. Activar Emergencia");
         System.out.println("8. Ver Avisos");
-        System.out.println("9. Cerrar Sesión");
+        System.out.println("9. Cerrar Sesion");
         System.out.println("10. Salir");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
     
     @Override
@@ -220,11 +220,11 @@ public class Residente extends Usuario implements IMenuResidente {
             case 9:
                 break;
             case 10:
-                System.out.println("\n¡Hasta luego!");
+                System.out.println("\nHasta luego!");
                 System.exit(0);
                 break;
             default:
-                System.out.println("Opción inválida");
+                System.out.println("Opcion invalida");
         }
     }
     
@@ -236,7 +236,7 @@ public class Residente extends Usuario implements IMenuResidente {
         System.out.println("Rol: " + this.getRol());
         System.out.println("Departamento: " + this.getDepartamento());
         System.out.println("Bloque: " + this.getBloque());
-        System.out.println("Teléfono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
+        System.out.println("Telefono: " + (this.getTelefono() != null ? this.getTelefono() : "No registrado"));
     }
     
     private void actualizarPerfil() {
@@ -267,89 +267,5 @@ public class Residente extends Usuario implements IMenuResidente {
         }
     }
     
-    public void pagarServicioGUI(String tipo, String montoTexto, String fechaTexto) throws Exception {
-        BigDecimal monto = convertirAMonto(montoTexto);
-        Date fechaVencimiento = convertirAFecha(fechaTexto);
-        Pago nuevoPago = crearPago(tipo, monto, fechaVencimiento);
-        guardarPago(nuevoPago);
-    }
-    
-    private BigDecimal convertirAMonto(String montoTexto) {
-        return new BigDecimal(montoTexto);
-    }
-    
-    private Date convertirAFecha(String fechaTexto) {
-        return Date.valueOf(fechaTexto);
-    }
-    
-    private Pago crearPago(String tipo, BigDecimal monto, Date fechaVencimiento) {
-        return new Pago(this.getIdUsuario(), tipo, monto, fechaVencimiento);
-    }
-    
-    private void guardarPago(Pago pago) throws Exception {
-        if (!pagoDAO.crear(pago)) {
-            throw new Exception("Error al registrar el pago");
-        }
-    }
-    
-    public void crearPedidoGUI(String descripcion, String tipo) throws Exception {
-        Pedido nuevoPedido = crearPedido(descripcion, tipo);
-        guardarPedido(nuevoPedido);
-    }
-    
-    private Pedido crearPedido(String descripcion, String tipo) {
-        return new Pedido(this.getIdUsuario(), descripcion, tipo);
-    }
-    
-    private void guardarPedido(Pedido pedido) throws Exception {
-        if (!pedidoDAO.crear(pedido)) {
-            throw new Exception("Error al crear el pedido");
-        }
-    }
-    
-    public void activarEmergenciaGUI(String tipo, String descripcion, String ubicacion, String prioridad) throws Exception {
-        Emergencia nuevaEmergencia = crearEmergencia(tipo, descripcion, ubicacion, prioridad);
-        guardarEmergencia(nuevaEmergencia);
-    }
-    
-    private Emergencia crearEmergencia(String tipo, String descripcion, String ubicacion, String prioridad) {
-        Emergencia emergencia = new Emergencia(this.getIdUsuario(), tipo, descripcion, ubicacion);
-        emergencia.setPrioridad(prioridad);
-        return emergencia;
-    }
-    
-    private void guardarEmergencia(Emergencia emergencia) throws Exception {
-        if (!emergenciaDAO.crear(emergencia)) {
-            throw new Exception("Error al activar la emergencia");
-        }
-    }
-    
-    public void actualizarPerfilGUI(String nombre, String telefono) throws Exception {
-        actualizarDatosPersonales(nombre, telefono);
-        guardarCambiosPerfil();
-    }
-    
-    private void actualizarDatosPersonales(String nombre, String telefono) {
-        this.setNombre(nombre);
-        this.setTelefono(telefono);
-    }
-    
-    private void guardarCambiosPerfil() throws Exception {
-        if (!usuarioDAO.actualizar(this)) {
-            throw new Exception("Error al actualizar el perfil");
-        }
-    }
-    
-    public List<Pago> obtenerPagos() throws Exception {
-        return pagoDAO.obtenerPorUsuario(this.getIdUsuario());
-    }
-    
-    public List<Pedido> obtenerPedidos() throws Exception {
-        return pedidoDAO.obtenerPorUsuario(this.getIdUsuario());
-    }
-    
-    public List<Aviso> obtenerAvisos() throws Exception {
-        return avisoDAO.obtenerActivos();
-    }
 }
 

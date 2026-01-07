@@ -53,12 +53,12 @@ private static final String PASSWORD = "";
 ### Paso 3: Ejecutar la Aplicacion
 
 Desde tu IDE:
-- Ejecuta la clase `com.residencial.gui.MainApp`
+- Ejecuta la clase `com.residencial.Main`
 
 O desde Maven:
 ```bash
 mvn clean compile
-mvn exec:java -Dexec.mainClass="com.residencial.gui.MainApp"
+mvn exec:java -Dexec.mainClass="com.residencial.Main"
 ```
 
 ## Estructura del Proyecto
@@ -72,19 +72,10 @@ proyectoFinalProgra2yandex/
 │       └── java/
 │           └── com/
 │               └── residencial/
-│                   ├── Main.java (consola - opcional)
-│                   ├── gui/
-│                   │   ├── MainApp.java
-│                   │   ├── controladores/
-│                   │   │   └── LoginController.java
-│                   │   ├── ventanas/
-│                   │   │   ├── VentanaResidente.java
-│                   │   │   ├── VentanaAdministrador.java
-│                   │   │   └── VentanaGuardia.java
-│                   │   └── util/
-│                   │       └── DialogosUtil.java
+│                   ├── Main.java
 │                   ├── dao/
 │                   ├── modelo/
+│                   ├── interfaces/
 │                   ├── util/
 │                   └── test/
 ├── lib/

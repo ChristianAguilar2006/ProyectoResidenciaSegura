@@ -40,26 +40,21 @@ public class EmergenciaDAO {
         ResultSet resultados = consulta.executeQuery();
         
         while (resultados.next()) {
-            Emergencia emergencia = crearEmergenciaDesdeResultado(resultados);
+            Emergencia emergencia = new Emergencia();
+            emergencia.setIdEmergencia(resultados.getInt("id_emergencia"));
+            emergencia.setIdUsuario(resultados.getInt("id_usuario"));
+            emergencia.setTipo(resultados.getString("tipo"));
+            emergencia.setDescripcion(resultados.getString("descripcion"));
+            emergencia.setUbicacion(resultados.getString("ubicacion"));
+            emergencia.setFechaReporte(resultados.getTimestamp("fecha_reporte"));
+            emergencia.setEstado(resultados.getString("estado"));
+            emergencia.setPrioridad(resultados.getString("prioridad"));
             listaEmergencias.add(emergencia);
         }
         
         resultados.close();
         consulta.close();
         return listaEmergencias;
-    }
-    
-    private Emergencia crearEmergenciaDesdeResultado(ResultSet resultados) throws SQLException {
-        Emergencia emergencia = new Emergencia();
-        emergencia.setIdEmergencia(resultados.getInt("id_emergencia"));
-        emergencia.setIdUsuario(resultados.getInt("id_usuario"));
-        emergencia.setTipo(resultados.getString("tipo"));
-        emergencia.setDescripcion(resultados.getString("descripcion"));
-        emergencia.setUbicacion(resultados.getString("ubicacion"));
-        emergencia.setFechaReporte(resultados.getTimestamp("fecha_reporte"));
-        emergencia.setEstado(resultados.getString("estado"));
-        emergencia.setPrioridad(resultados.getString("prioridad"));
-        return emergencia;
     }
     
     public boolean actualizarEstado(int idEmergencia, String nuevoEstado, Integer idGuardia) throws SQLException {
